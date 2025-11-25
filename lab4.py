@@ -7,8 +7,8 @@ class RsaMachine:
         self.base = len(alphabet)
 
         # two random primes
-        self.p = sympy.randprime(100, 300)
-        self.q = sympy.randprime(100, 300)
+        self.p = 31
+        self.q = 43
         # product
         self.n = self.p * self.q
         # euler's totient
@@ -35,14 +35,14 @@ class RsaMachine:
         return self.d, self.n
 
     def encode_block(self, chars):
-        """Encode plaintext block of size 2 into integer."""
+        """Encode plaintext block into integer."""
         num = 0
         for ch in chars:
             num = num * self.base + self.alphabet.index(ch)
         return num
 
     def decode_block(self, num):
-        """Decode plaintext integer into 2 chars."""
+        """Decode plaintext integer."""
         chars = []
         for _ in range(self.plain_block):
             chars.append(self.alphabet[num % self.base])
@@ -50,7 +50,7 @@ class RsaMachine:
         return ''.join(reversed(chars))
 
     def encode_cipher_block(self, num):
-        """Encode RSA ciphertext number into 3 chars."""
+        """Encode RSA ciphertext number."""
         chars = []
         for _ in range(self.cipher_block):
             chars.append(self.alphabet[num % self.base])
@@ -58,7 +58,7 @@ class RsaMachine:
         return ''.join(reversed(chars))
 
     def decode_cipher_block(self, chars):
-        """Decode 3 ciphertext chars into a number."""
+        """Decode 3 ciphertext chars."""
         num = 0
         for ch in chars:
             num = num * self.base + self.alphabet.index(ch)
@@ -102,11 +102,13 @@ Rsa = RsaMachine(alphabet)
 pub = Rsa.gen_public_key()
 priv = Rsa.gen_private_key()
 
-plaintext = "hello_world"
+plaintext = "___abcdebla_bla_blaffffffff_blaghjkla_______________bla_"
 
 cipher = Rsa.encrypt(plaintext, pub)
 decrypted = Rsa.decrypt(cipher, priv)
 
-print("Plaintext:", plaintext)
-print("Ciphertext:", cipher)
-print("Decrypted:", decrypted)
+try:
+    assert decrypted == plaintext
+    # print(f"Test passed on run {run}")
+except AssertionError:
+    print(f"Test failed: expected {plaintext}, got {decrypted}")
